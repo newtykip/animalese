@@ -4,7 +4,10 @@
     "node_modules": true,
     ".svelte-kit": true,
     "build": true,
-    "src-tauri/gen": true
+    "src-tauri/gen": true,
     "src-tauri/target": true
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
   }
 }

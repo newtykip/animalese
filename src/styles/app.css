@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import "$styles/theme.css";
+
+body {
+    @apply bg-cream text-acorn select-none;
+}
