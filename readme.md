@@ -4,13 +4,10 @@
 
 ### palette
 
-<!-- todo: add colour swatches -->
-
-| color name |   hex   |        purpose         |
-| :--------: | :-----: | :--------------------: |
-|   cream    | #f8f0dc | main background colour |
-|    sand    | #f3deb1 |  interactive elements  |
-|   honey    | #e8c97d | headers and highlights |
-|   acorn    | #74664b |      text colours      |
-|    twig    | #e6d8b5 |        borders         |
-|  rosehip   | #e86b5a |         close          |
+|                color name                |   hex   |        purpose         |
+| :--------------------------------------: | :-----: | :--------------------: |
+| ![cream swatch](palette/cream.png) cream | #f8f0dc | main background colour |
+|  ![sand swatch](palette/sand.png) sand   | #f3deb1 |  interactive elements  |
+| ![honey swatch](palette/honey.png) honey | #e8c97d | headers and highlights |
+| ![acorn swatch](palette/acorn.png) acorn | #74664b |      text colours      |
+|  ![twig swatch](palette/twig.png) twig   | #e6d8b5 |        borders         |
