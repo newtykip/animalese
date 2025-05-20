@@ -5,6 +5,7 @@
 ### palette
 
 <!-- todo: add colour swatches -->
+
 | color name |   hex   |        purpose         |
 | :--------: | :-----: | :--------------------: |
 |   cream    | #f8f0dc | main background colour |
