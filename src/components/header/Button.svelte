@@ -1,15 +1,15 @@
 <script lang="ts">
-    import type { Icon as IconType } from "lucide-svelte";
+  import type { Icon as IconType } from "lucide-svelte";
 
-    interface Props {
-        class?: string;
-        Icon: typeof IconType;
-        onclick?: () => void;
-    }
+  interface Props {
+    class?: string;
+    Icon: typeof IconType;
+    onclick?: () => void;
+  }
 
-    let { class: clazz, Icon, onclick }: Props = $props();
+  let { class: clazz, Icon, onclick }: Props = $props();
 </script>
 
-<button class="px-2 h-full flex items-center group {clazz}" {onclick} >
-    <Icon class="transition-transform duration-150 group-hover:scale-115" />
+<button class="group flex h-full items-center px-2 {clazz}" {onclick}>
+  <Icon class="group-hover:scale-115 transition-transform duration-150" />
 </button>

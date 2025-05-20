@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-opener": "^2"
+    "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-os": "~2"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.6",
@@ -22,6 +23,9 @@
     "@tailwindcss/vite": "^4.1.7",
     "@tauri-apps/cli": "^2",
     "lucide-svelte": "^0.511.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-svelte": "^3.4.0",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "tailwindcss": "^4.1.7",

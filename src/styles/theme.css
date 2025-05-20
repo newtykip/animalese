@@ -1,32 +1,26 @@
 @theme initial {
-    --color-*: initial; /* remove preexisting colours */
+  --color-*: initial; /* remove preexisting colours */
 
-    --color-cream: var(--cream);
-    --color-sand: var(--sand);
-    --color-honey: var(--honey);
-    --color-acorn: var(--acorn);
-    --color-twig: var(--twig);
-    --color-rosehip: var(--rosehip);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-honey: var(--honey);
+  --color-acorn: var(--acorn);
+  --color-twig: var(--twig);
+  --color-rosehip: var(--rosehip);
 
-    --font-title: "FOT-RodinBokutoh Pro EB", sans-serif;
-    --font-sans: "FOT-Seurat Pro B", sans-serif;
+  --font-sans: "FOT-Seurat Pro B", sans-serif;
 }
 
 :root {
-    --cream: #f8f0dc;
-    --sand: #f3deb1;
-    --honey: #e8c97d;
-    --acorn: #74664b;
-    --twig: #e6d8b5;
-    --rosehip: #e86b5a;
+  --cream: #f8f0dc;
+  --sand: #f3deb1;
+  --honey: #e8c97d;
+  --acorn: #74664b;
+  --twig: #e6d8b5;
+  --rosehip: #e86b5a;
 }
 
 @font-face {
-    font-family: "FOT-RodinBokutoh Pro EB";
-    src: url("/fonts/FOT-RodinBokutoh Pro EB.otf") format("opentype");
-}
-
-@font-face {
-    font-family: "FOT-Seurat Pro B";
-    src: url("/fonts/FOT-Seurat Pro B.otf") format("opentype");
+  font-family: "FOT-Seurat Pro B";
+  src: url("/fonts/FOT-Seurat Pro B.woff2") format("woff2");
 }
