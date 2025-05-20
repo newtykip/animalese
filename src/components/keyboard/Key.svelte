@@ -1,26 +1,31 @@
 <script lang="ts">
-  import type { Icon as IconType } from "lucide-svelte";
+  import type { Key } from "$consts/keyboard";
+  import { invoke } from "@tauri-apps/api/core";
 
-  export interface Props {
-    span?: number;
-    label?: string;
-    icon?: typeof IconType;
-    active?: boolean;
-  }
+  export type Props = Key & {
+    active: boolean;
+  };
 
-  let { span = 2, label, icon: Icon, active }: Props = $props();
-  const activeClass = $derived(active ? "bg-honey shadow-md" : "bg-sand");
+  const { label, key, span = 2, active }: Props = $props();
+  const isIcon = typeof label === "function";
+
+  $effect(() => {
+    console.log("Key", { label, key, span, active });
+  });
 </script>
 
 <button
-  class="{activeClass} border-twig border-1 m-1 flex h-8 items-center justify-center gap-1 rounded-xl text-sm transition-colors duration-100 hover:shadow-md"
+  class=" border-twig border-1 m-1 flex h-8 items-center justify-center gap-1 rounded-xl text-sm transition-colors duration-100 hover:shadow-md {active
+    ? 'bg-honey shadow-md'
+    : 'bg-sand'}"
   tabindex="-1"
   style="grid-column-end: span {span};"
+  onclick={() => invoke("simulate_key", { key })}
 >
-  {#if Icon}
-    <Icon />
-  {/if}
-  {#if label}
+  {#if isIcon}
+    <!-- svelte-ignore svelte_component_deprecated -->
+    <svelte:component this={label} />
+  {:else}
     {label}
   {/if}
 </button>
