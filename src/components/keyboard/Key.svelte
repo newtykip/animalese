@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Key } from "$consts/keyboard";
   import { invoke } from "@tauri-apps/api/core";
+  import { Icon } from "lucide-svelte";
 
   export type Props = Key & {
     active: boolean;
@@ -8,10 +9,6 @@
 
   const { label, key, span = 2, active }: Props = $props();
   const isIcon = typeof label === "function";
-
-  $effect(() => {
-    console.log("Key", { label, key, span, active });
-  });
 </script>
 
 <button
@@ -23,8 +20,8 @@
   onclick={() => invoke("simulate_key", { key })}
 >
   {#if isIcon}
-    <!-- svelte-ignore svelte_component_deprecated -->
-    <svelte:component this={label} />
+    {@const Icon = label}
+    <Icon />
   {:else}
     {label}
   {/if}
