@@ -8,24 +8,40 @@ mod keyboard;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_os::init())
-        .plugin(tauri_plugin_opener::init())
+    // plugins
+    let mut builder = tauri::Builder::default().plugin(tauri_plugin_os::init());
+
+    // only allow one instance of the app to run
+    #[cfg(desktop)]
+    {
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            // focus the existing instance
+            let _ = app
+                .get_webview_window("main")
+                .expect("no main window")
+                .set_focus();
+        }));
+    }
+
+    builder
         // don't let tauri consume the events when focused
         .device_event_filter(DeviceEventFilter::Always)
         .setup(|app| {
             // create tray icon
-            let _tray = TrayIconBuilder::new()
-                // unwrap is safe here because we know the icon is present
-                .icon(app.default_window_icon().unwrap().clone())
-                .tooltip("animalese")
-                .menu({
-                    &Menu::with_items(
-                        app,
-                        &[&MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?],
-                    )?
-                })
-                .build(app)?;
+            #[cfg(desktop)]
+            {
+                let _tray = TrayIconBuilder::new()
+                    // unwrap is safe here because we know the icon is present
+                    .icon(app.default_window_icon().unwrap().clone())
+                    .tooltip("animalese")
+                    .menu({
+                        &Menu::with_items(
+                            app,
+                            &[&MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?],
+                        )?
+                    })
+                    .build(app)?;
+            }
 
             // handle keypresses
             let handle = app.handle().clone();
@@ -41,18 +57,25 @@ pub fn run() {
             }
             _ => {}
         })
-        // show the window again when the tray icon is left clicked
-        .on_tray_icon_event(|tray, event| match event {
-            TrayIconEvent::Click {
-                button: MouseButton::Left,
-                button_state: MouseButtonState::Up,
-                ..
-            } => {
-                if let Some(window) = tray.get_webview_window("main") {
-                    let _ = window.show().and_then(|_| window.set_focus());
+        .on_tray_icon_event(|app, event| {
+            // show the window again when the tray icon is left clicked
+            match event {
+                TrayIconEvent::Click {
+                    button: MouseButton::Left,
+                    button_state: MouseButtonState::Up,
+                    ..
+                } => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        if !window.is_visible().unwrap_or(false) {
+                            let _ = window
+                                .center()
+                                .and_then(|_| window.show())
+                                .and_then(|_| window.set_focus());
+                        }
+                    }
                 }
+                _ => {}
             }
-            _ => {}
         })
         // handle tray icon menu events
         .on_menu_event(|app, event| match event.id.as_ref() {

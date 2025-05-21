@@ -7,7 +7,7 @@
   --color-acorn: var(--acorn);
   --color-twig: var(--twig);
 
-  --font-sans: "FOT-Seurat Pro B", sans-serif;
+  --font-sans: "FOT-Seurat Pro", sans-serif;
 }
 
 :root {
@@ -19,6 +19,13 @@
 }
 
 @font-face {
-  font-family: "FOT-Seurat Pro B";
+  font-family: "FOT-Seurat Pro";
   src: url("/fonts/FOT-Seurat Pro B.woff2") format("woff2");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "FOT-Seurat Pro";
+  src: url("/fonts/FOT-Seurat Pro EB.woff2") format("woff2");
+  font-weight: 700;
 }
