@@ -1,29 +1,10 @@
-use rdev::{EventType, Key};
-use std::{collections::HashSet, thread, time::Duration};
-use tauri::{AppHandle, DeviceEventFilter, Emitter};
+use tauri::{
+    menu::{Menu, MenuItem},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    DeviceEventFilter, Manager, WindowEvent,
+};
 
-/// Simulate a key press and release event
-#[tauri::command]
-fn simulate_key(key: String) -> Result<(), &'static str> {
-    let key = serde_json::from_str::<Key>(&format!("{:?}", key)).map_err(|_| "Invalid key")?;
-    thread::spawn(move || {
-        rdev::simulate(&EventType::KeyPress(key))
-            .and_then(|_| {
-                thread::sleep(Duration::from_millis(150));
-                rdev::simulate(&EventType::KeyRelease(key))
-            })
-            .map_err(|_| "Failed to simulate key press")?;
-
-        Ok::<_, String>(())
-    });
-    Ok(())
-}
-
-/// Emit a key event to the frontend
-fn emit_key(handle: &AppHandle, event: &str, key: Key) -> tauri::Result<()> {
-    let payload = format!("{:?}", key);
-    handle.emit_to("main", event, payload)
-}
+mod keyboard;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -33,30 +14,54 @@ pub fn run() {
         // don't let tauri consume the events when focused
         .device_event_filter(DeviceEventFilter::Always)
         .setup(|app| {
+            // create tray icon
+            let _tray = TrayIconBuilder::new()
+                // unwrap is safe here because we know the icon is present
+                .icon(app.default_window_icon().unwrap().clone())
+                .tooltip("animalese")
+                .menu({
+                    &Menu::with_items(
+                        app,
+                        &[&MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?],
+                    )?
+                })
+                .build(app)?;
+
+            // handle keypresses
             let handle = app.handle().clone();
-            thread::spawn(move || {
-                let mut pressed = HashSet::new();
-                let callback = move |event: rdev::Event| match event.event_type {
-                    EventType::KeyPress(key) if !pressed.contains(&key) => {
-                        // we don't want to process the left control if we have already processed AltGr
-                        if pressed.contains(&Key::AltGr) && key == Key::ControlLeft {
-                            return;
-                        }
-                        let _ = emit_key(&handle, "KeyPress", key);
-                        pressed.insert(key);
-                    }
-                    EventType::KeyRelease(key) => {
-                        let _ = emit_key(&handle, "KeyRelease", key);
-                        pressed.remove(&key);
-                    }
-                    _ => {}
-                };
-                rdev::listen(callback)
-            });
+            std::thread::spawn(move || keyboard::listen(handle));
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![simulate_key])
+        // prevent the window from closing when the user clicks the close button
+        .on_window_event(|window, event| match event {
+            WindowEvent::CloseRequested { api, .. } => {
+                let _ = window.hide();
+                api.prevent_close();
+            }
+            _ => {}
+        })
+        // show the window again when the tray icon is left clicked
+        .on_tray_icon_event(|tray, event| match event {
+            TrayIconEvent::Click {
+                button: MouseButton::Left,
+                button_state: MouseButtonState::Up,
+                ..
+            } => {
+                if let Some(window) = tray.get_webview_window("main") {
+                    let _ = window.show().and_then(|_| window.set_focus());
+                }
+            }
+            _ => {}
+        })
+        // handle tray icon menu events
+        .on_menu_event(|app, event| match event.id.as_ref() {
+            "quit" => {
+                app.exit(0);
+            }
+            _ => {}
+        })
+        .invoke_handler(tauri::generate_handler![keyboard::simulate_key])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
