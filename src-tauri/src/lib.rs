@@ -11,16 +11,19 @@ pub fn run() {
     // plugins
     let mut builder = tauri::Builder::default().plugin(tauri_plugin_os::init());
 
-    // only allow one instance of the app to run
     #[cfg(desktop)]
     {
-        builder = builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            // focus the existing instance
-            let _ = app
-                .get_webview_window("main")
-                .expect("no main window")
-                .set_focus();
-        }));
+        builder = builder
+            // only allow one instance of the app to run
+            .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+                // focus the existing instance
+                let _ = app
+                    .get_webview_window("main")
+                    .map(|window| window.set_focus().ok())
+                    .flatten();
+            }))
+            // updater
+            .plugin(tauri_plugin_updater::Builder::new().build());
     }
 
     builder

@@ -20,6 +20,7 @@ rdev = { version = "0.5.3", features = ["serialize"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2"
 
 [profile.release]
 panic = "abort" # Strip expensive panic clean-up logic
